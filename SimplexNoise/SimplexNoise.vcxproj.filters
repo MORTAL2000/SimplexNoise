@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Lode">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Simplex">
+      <UniqueIdentifier>{8821087a-80ae-4b92-a587-c8b65c1bf35c}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="lodepng.cpp">
+      <Filter>Lode</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Simplex</Filter>
+    </ClCompile>
+    <ClCompile Include="SimplexNoise.cpp">
+      <Filter>Simplex</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="lodepng.h">
+      <Filter>Lode</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector3.h">
+      <Filter>Simplex</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2.h">
+      <Filter>Simplex</Filter>
+    </ClInclude>
+    <ClInclude Include="SimplexNoise.h">
+      <Filter>Simplex</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
