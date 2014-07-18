@@ -3,8 +3,6 @@
 #include <random>
 #include "Vector2.h"
 
-/*const int SimplexNoise::RANDOM_SEED = 0;
-const int SimplexNoise::NUMBER_OF_SWAPS = 400;*/
 const Vector3i SimplexNoise::grad3[12] = {
 	Vector3i(1,1,0), Vector3i(-1,1,0), Vector3i(1,-1,0), Vector3i(-1,-1,0),
 	Vector3i(1,0,1), Vector3i(-1,0,1), Vector3i(1,0,-1), Vector3i(-1,0,-1),
@@ -26,19 +24,28 @@ const short SimplexNoise::p_supply[256] = {
 	138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180
 };
 
+const int SimplexNoise::ZERO_SEED = 0;
+const int SimplexNoise::NUMBER_OF_SWAPS = 400;
+
 const double SimplexNoise::F2 = 0.5 * (sqrt(3.0) - 1.0);
 const double SimplexNoise::G2 = (3.0 - sqrt(3.0)) / 6.0;
 
-SimplexNoise::SimplexNoise(int largestFeature, double persistence, int low, int high, int seed) {
+const double SimplexNoise::DEF_OCTAVES = 8;
+const double SimplexNoise::DEF_PERSISTENCE = 0.65;
+const double SimplexNoise::lacunarity = 2.0;
+
+SimplexNoise::SimplexNoise(double featureSize, double persistence, int octaves, int seed) {
 	std::copy(p_supply, p_supply + 256, p);
-#if 0
-	// TO DO : Add seed randomness
-	if (seed == RANDOM_SEED) {
+	
+	/*No seed provided, use hardware to create one!*/
+	if (seed == ZERO_SEED) {
 		std::random_device rd;
 		seed = rd();
 	}
 
+	/*Seed the mersenne prng engine*/ 
 	std::mt19937 eng(seed);
+	/*Define our range for swaps*/
 	std::uniform_int_distribution<> rand(0,255);
 	
 	for (int i = 0; i < NUMBER_OF_SWAPS; ++i) {
@@ -53,31 +60,27 @@ SimplexNoise::SimplexNoise(int largestFeature, double persistence, int low, int 
 		short temp = p[swapFrom];
 		p[swapFrom] = p[swapTo];
 		p[swapTo] = temp;
-		std::cout << p[swapFrom] << std::endl;
-		std::cout << p[swapTo] << std::endl;
 	}
-#endif
 
 	for (int i = 0; i < 512; ++i) {
 		perm[i] = p[i & 255];
 		permMod12[i] = (short)(perm[i] % 12);
 	}
+
+	/*pre compute frequency/amplitude modifiers*/
+	frequency.push_back(1.0 / featureSize);
+	amplitude.push_back(persistence);
+	for (int i = 1; i < octaves; ++i) {
+		frequency.push_back(frequency[i-1] * lacunarity);
+		amplitude.push_back(amplitude[i-1] * persistence);
+	}
 }
 
 double SimplexNoise::NoiseAt(int x, int y) {
-	/*TO DO: 
-		Pre compute freq/amp on class creation?
-	*/
 	double noise = 0;
-	double freq = 1.0 / 80.0;
-	double amp = 0.5;
-
-	for (int i = 0; i < 8; ++i) {
-		noise += Noise(x * freq, y * freq) * amp;
-		freq *= 2.0;
-		amp *= 0.5;
+	for (int i = 0; i < frequency.size(); ++i) {
+		noise += Noise(x * frequency[i], y * frequency[i]) * amplitude[i];
 	}
-
 	return noise;
 }
 

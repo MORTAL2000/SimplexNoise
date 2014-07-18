@@ -15,12 +15,12 @@ Peter Easeman: peastman@drizzle.stanford.edu
 
 class SimplexNoise {
 public:
-	SimplexNoise(int largestFeature, double persistence, int low, int high, int seed = 0);
+	SimplexNoise(double featureSize, double persistence = DEF_PERSISTENCE, int octaves = DEF_OCTAVES, int seed = 0);
 	double NoiseAt(int x, int y);
 	double Noise(double xin, double yin) const;
 
 private:
-	static const int RANDOM_SEED;
+	static const int ZERO_SEED;
 	static const int NUMBER_OF_SWAPS;
 	static const Vector3i grad3[12];
 
@@ -34,4 +34,10 @@ private:
 
 	double dot(const Vector3i& a, const Vector2d& b) const;
 	double CornerContribution(int gradIndex, const Vector2d& xy) const;
+
+	static const double DEF_PERSISTENCE;
+	static const double DEF_OCTAVES;
+	static const double lacunarity; //leave fixed as 2.0
+	std::vector<double> frequency;
+	std::vector<double> amplitude;
 };
